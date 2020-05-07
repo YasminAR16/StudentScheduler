@@ -4,7 +4,7 @@
 *	This module implements the structure of a schedule.
 * A schedule contains an array of courses and the fitness score of the overall schedule.
 *
-*      Created by Yasmin
+*      Created by Yasmin Alvarado-Rayo
 */
 
 
@@ -17,62 +17,49 @@
 int timeSlotFits(int);
 int scheduleFitnessTest(schedule);
 int randomNumber(int, int);
-void insertDisabledTimeSlots(int);
+int insertDisabledTimeSlots(int);
 
-/* time slots we can't use in a given schedule */
-int disabledTimeSlots[5];
+/* global variables */
+int disabledTimeSlots[5]; /* time slots we can't use in a given schedule */
 schedule randomSchedule; /* random schedule */
 
 /**************************************************************************************************************/
 /* Description: Initialize a random schedule containing all the elements of the struct.
-*  This method will be only called once during initialization of simulated annealing.
+*  This method will be called to create a random schedule in simulated annealing.
 *  Parameters: none
 *  Return: a schedule class containing a array of random courses, and its fitnessScore */
 schedule createRandomSchedule(){
 
-    /*printf("random schedule is being made \n");*/
-
+    /* will loop and gather 5 course for the schedule */
     for(int i = 0; i < 5; i++){
-        /*printf("grabbing a course \n");*/
+
+        /* grab random course from our array(allCourses) full of courses */
         course randomCourse = allCourses[randomNumber(0, totalCourses-1)];
 
         /* get time slot of the current schedule to compare to schedule */
         int currentTimeSlot = randomCourse.time;
 
         /* check to see if is a fit, if not continue to find one that fits the schedule */
+        /* this while loop ensures no repeated courses and no repeated time slots in schedule */
         while(timeSlotFits(currentTimeSlot) == 0){
             randomCourse = allCourses[randomNumber(0, totalCourses-1)];
             currentTimeSlot = randomCourse.time;
         }
 
-//        printf("Current Time Slot is ");
-//        printf("%d" ,currentTimeSlot);
-//        printf("\n");
-
         /* assumes we found one, add the current time of the course to disable list of times */
         insertDisabledTimeSlots(currentTimeSlot);
 
-        /* printf("Added a random course into schedule \n"); */
+        /* add the random course into our schedule */
         randomSchedule.listOfCourses[i] = randomCourse;
     }
 
-    printf("all five courses have been added \n");
+    /* score after going through fitness test of schedule */
+    int finalFitness = scheduleFitnessTest(randomSchedule);
 
-    for(int i = 0; i < 5; i++){
-        printf("%d", randomSchedule.listOfCourses[i].fitnessScore);
-        printf(" + ");
-
-    }
-
-    int finalFitness = scheduleFitnessTest(randomSchedule); /* score after going through fitness test of schedule */
-
+    /* set the fitness score of the entire schedule */
     randomSchedule.fitnessScore = finalFitness;
 
-    printf("Fitness is ");
-    printf("%d" ,randomSchedule.fitnessScore);
-    printf("\n");
-
-    /* clear the disabled times to be 0 */
+    /* clear the disabled times to be 0 so the array can be used again for another schedule */
     for(int i = 0; i < 5; i++){
         disabledTimeSlots[i] = 0;
     }
@@ -87,12 +74,16 @@ schedule createRandomSchedule(){
 *  Return: 1 if it fits in schedule, 0 if not */
 int timeSlotFits(int desiredTime){
     int result = 1;
+
+    /* loop through the 5 times until there is a match or no more to look through */
     for(int i = 0; i < 5; i++){
+        /* if it matches, it doesn't fit */
         if(disabledTimeSlots[i] == desiredTime){
             result = 0;
             return result;
         }
     }
+
     return result;
 }
 /**************************************************************************************************************/
@@ -101,12 +92,15 @@ int timeSlotFits(int desiredTime){
 /* Description: inserts given time slot into the diabled list
 *  Parameters: currentTimeSlot (int)
 *  Return: none */
-void insertDisabledTimeSlots(int currentTimeSlot){
+int insertDisabledTimeSlots(int currentTimeSlot){
+    /* loop until there is a 0, meaning it hasn't been set */
     for(int i = 0; i < 5; i++){
-        if(&disabledTimeSlots[i] == NULL){
+        if(disabledTimeSlots[i] == 0){
             disabledTimeSlots[i] = currentTimeSlot;
+            return 1;
         }
     }
+    return 0;
 }
 /**************************************************************************************************************/
 
@@ -121,9 +115,12 @@ int scheduleFitnessTest(schedule scheduleName){
     for(int i = 0; i < 5; i++){
         result = result + (scheduleName.listOfCourses[i]).fitnessScore;
     }
+
     return result;
 }
+/**************************************************************************************************************/
 
+/**************************************************************************************************************/
 /* function that generates a random number
 *   given lower and upper bound */
 int randomNumber(int lower, int upper){

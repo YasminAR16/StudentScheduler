@@ -4,7 +4,7 @@
 *	This module implements the structure of a course.
 *
 *
-*      Created by Yasmin
+*      Created by Yasmin Alvarado-Rayo
 */
 
 #include <stdio.h>
@@ -13,8 +13,8 @@
 #include "h/types.h"
 #include "e/user.e"
 
-/* global list with all course filtered using matching? (tbd) */
-course allCourses[TOTALCOURSES];
+/* global variables */
+course allCourses[TOTALCOURSES]; /* array containing all courses filtered by web scraping */
 
 /* prototypes so it doesn't get mad */
 int courseFitnessTest(course);
@@ -32,7 +32,6 @@ void initCourse(int index, string courseDept, int courseNum, int courseTime, str
     var_course.time = courseTime;
     strcpy(var_course.flags, courseFlags); /* contains reg flags, minor, and major flags */
     strcpy(var_course.instructor, courseInstr);
-    var_course.fitnessScore = 0; /* evaluate course */
 
     /* before we add to list, do fitnesScore of each course */
     /* evaluate course */
@@ -77,12 +76,6 @@ int courseFitnessTest(course courseName){
             totalFitness = totalFitness + 5;
         }
     }
-
-
-    printf("%s", courseName.instructor);
-    printf(" - ");
-    printf("%d", totalFitness);
-    printf("\n");
 
     return totalFitness;
 }

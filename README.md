@@ -1,8 +1,5 @@
 # StudentScheduler
-
-A website will be developed that will create multiple mock schedules for students depending on the given criteria they give it. The criteria will be gathered from the following five categories: classes taken, current academic courses offered, major/core requirements, student’s interests, and student’s desired times to have classes. In addition, the categories will be ranked by the student to prioritize the criteria when creating the mock schedules. The algorithms used to create the possible mock schedules will be simulated annealing and bipartite matching.
-
-Software to currently inform students on what classes they are missing and what classes are being offered/will be offered already exists with DegreeWorks and Xavier’s registration system. However, a system that combines the two to provide a mock-up schedule for students does not exist. This would aid students to have options before them that fit their needs when the time comes to register for classes. It would enforce the idea of needing to have particular courses to graduate but also take into account choices in interests and in desired class time.
+Students find it incredibly frustrating to register for classes at Xavier University. They must independently find courses and create multiple schedules. My project focuses on creating a system that combines DegreeWorks and Xavier’s registration system to provide five mock-up schedules for students using the simulated annealing algorithm. It relies on the given criteria from the following five categories: classes taken, current academic courses offered, major/core requirements, student’s interests, and student’s desired times to have classes. This will aid students to have options before them that fit their needs when the time comes to register for classes.
 
 ## Getting Started
 
@@ -12,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 What things you need to install the software:
 
-N/A
+Be able to build C code. I am currently using X-Code to build and run program.
 
 ### Installing
 
@@ -23,9 +20,9 @@ Clone repo on desired file:
 $ git clone https://github.com/YasminAR16/StudentScheduler.git
 ```
 
-## Iteration 1 Function Tests
+## Iteration Function Tests
 
-N/A
+The current test file created a user with preferences (major, minor, flags, and time slot preferences). After, it takes in 15 courses with their attributes (course number, department, flags, instructor, and time slot). Using the simulated annealing algorithm, it produces the top five schedules that user can use for registration that avoid duplicate courses and courses within the same time slot per schedule. It prints the course details per schedule.
 
 ## Built With
 

@@ -4,7 +4,7 @@
 *	This module implements simulated annealing algorithm.
 *
 *
-*      Created by Yasmin
+*      Created by Yasmin Alvarado-Rayo
 */
 
 #include <math.h>
@@ -19,25 +19,20 @@ void insertSchedule(schedule, int);
 int evaluateCutOffFitnessScore(void);
 
 /* global variables */
-/* array of top 5 schedules that each contains 5 courses */
-schedule topFive[LISTOFCOURSES_MAX];
- /* fitnessScore that is cutoff */
- int cutOffFitnessScore;
- /* main user created that will be used globally is in user.c */
+schedule topFive[LISTOFCOURSES_MAX]; /* array of top 5 schedules that each contains 5 courses */
+ int cutOffFitnessScore;             /* fitnessScore that is cutoff                           */
 
 /**************************************************************************************************************/
 int SimAnnealing(){
 
-    printf("Grabbing random schedule... \n");
-    //first configuration of a schedule
+    /* first configuration of a schedule */
     schedule currentSchedule = createRandomSchedule();
-    printf("Grabbed it. \n");
 
-    //the probabilities and local variables
+    /* the probabilities and local variables */
     double probability;
     double alpha = 0.95;
     double temperature = 10.0;
-    double epsilon = 0.000001;
+    double epsilon = 0.000001; /* 5 zeros and 22 zeros */
     int delta;
 
     /* int to keep track of how many times we iterate */
@@ -46,34 +41,31 @@ int SimAnnealing(){
     /* current cutoff of fitness is 0 */
     cutOffFitnessScore = 0;
 
-    //while the temperature did not reach epsilon
-    while(temperature > epsilon){ //5 zeros and 22 zeros
+    /* while the temperature did not reach epsilon */
+    while(temperature > epsilon){ /* 5 zeros and 22 zeros */
 
         iteration++; /* add to iteration */
 
-        //cooling process on every iteration
+        /* cooling process on every iteration */
         temperature = temperature * alpha;
 
-        //get the next random permutation of courses
-        //the next configuration of courses to be tested
+        /* get the next random permutation of courses */
+        /* the next configuration of courses to be tested */
         schedule nextSchedule = createRandomSchedule();
 
-        printf("Grabbed next random schedule \n");
 
-        //compute the diff of fitness of the new permuted configuration //fitness test (hitting 5 criterias)
+        /* compute the diff of fitness of the new permuted configuration */
         delta = nextSchedule.fitnessScore - currentSchedule.fitnessScore;
 
-        //if the new fitnessScore is better accept it and assign it
+        /* if the new fitnessScore is better accept it and assign it */
         if(delta > 0){
             currentSchedule = nextSchedule;
             currentSchedule.fitnessScore = delta + currentSchedule.fitnessScore;
+
+            /* if its better than the cutoff fitness score, add it to the topFive and reassess cutOffFitnessScore */
             if(currentSchedule.fitnessScore > cutOffFitnessScore){
                 insertSchedule(currentSchedule, currentSchedule.fitnessScore);
                 cutOffFitnessScore = evaluateCutOffFitnessScore();
-                printf("Cutoff is now ");
-                printf("%d", cutOffFitnessScore);
-                printf("\n");
-
              }
         }
 
@@ -81,16 +73,18 @@ int SimAnnealing(){
         else{
             probability = randomNumber(0, 10);
 
-            //if the probability is less than E to the power -delta/temperature.
-            //otherwise the old value is kept
+            /* if the probability is less than E to the power -delta/temperature. */
+            /* otherwise the old value is kept */
             if(probability < (exp(-delta/temperature))){
                 currentSchedule = nextSchedule;
                 currentSchedule.fitnessScore = delta + currentSchedule.fitnessScore;
             }
         }
+
     }
 
-    printf("Iterations in sim annealing: ");
+    /* print out number of iterations */
+    printf("number of iterations in sim annealing: ");
     printf("%d", iteration);
     printf("\n");
     return currentSchedule.fitnessScore;
@@ -99,12 +93,13 @@ int SimAnnealing(){
 /**************************************************************************************************************/
 
 /**************************************************************************************************************/
-/* Function to sort an array using insertion sort (in this case sorted by fitnessScore) given a schedule to insert and its fitness score
+/* Function to sort an array in descending order using insertion sort
+        (in this case sorted by fitnessScore) given a schedule to insert and its fitness score
     Return: 0 if not inserted, return 1 if inserted */
 void insertSchedule(schedule currentSchedule, int fitness){
 
     /* take out the schedule that's the worst in the sorted array and place new schedule there */
-    /* last schedule is the worst */
+    /* last schedule is the worst (has min score) */
     topFive[4] = currentSchedule;
 
     /* now sort the list */
@@ -113,8 +108,8 @@ void insertSchedule(schedule currentSchedule, int fitness){
         schedule temp = topFive[index];
       int j = index - 1;
 
-      // Compare key with each element on the left of it until an element bigger than
-      // it is found.
+      /* Compare key with each element on the left of it until an element bigger than */
+      /* it is found. */
         while (keyNum > topFive[j].fitnessScore && j >= 0) {
             topFive[j + 1] = topFive[j];
             j--;
@@ -125,8 +120,8 @@ void insertSchedule(schedule currentSchedule, int fitness){
 /**************************************************************************************************************/
 
 /**************************************************************************************************************/
-/* evaluated the current cutoffFitnessScore
- Returns the fitnessScore of last element bc it is the worst of the top five */
+/* evaluates the current cutoffFitnessScore
+ Returns: the fitnessScore of last element because it is the worst/min of the top five */
 int evaluateCutOffFitnessScore(){
     int result = topFive[4].fitnessScore;
     return result;
@@ -137,10 +132,13 @@ int evaluateCutOffFitnessScore(){
 /* Function to print off the top five schedules and its contents
     Return: none */
 void printTopFiveSchedules(){
+    printf("\nThe following schedules are your top five... \n");
+
     /* access schedule by index */
     for(int schedule = 0; schedule < 5; schedule++){
         /* access classes of current schedule by index */
         printf("SCHEDULE: \n");
+
         for(int class = 0; class < 5; class++){
             printf("%s",((topFive[schedule]).listOfCourses[class]).department);
             printf(" ");
@@ -152,6 +150,7 @@ void printTopFiveSchedules(){
             printf(" ");
             printf("\n");
         }
+
         printf("-Fitness Score of ");
         printf("%d",(topFive[schedule]).fitnessScore);
         printf("\n ----------------------\n");
